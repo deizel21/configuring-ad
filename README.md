@@ -39,7 +39,7 @@ This tutorial outlines the implementation of on-premises Active Directory within
 
 <h2>Video Demonstration</h2>
 
-- ### [YouTube: How to Deploy on-premises Active Directory within Azure Compute](https://www.youtube.com)
+- ### https://www.loom.com/share/a108f66972b841b3af00c6d4aa5e4035
 
 <h2>Environments and Technologies Used</h2>
 Before starting this lab you need two virtual machines in Azure. Both must be on the same VNet and subnet so they can communicate with each other.
@@ -236,18 +236,18 @@ New-ADOrganizationalUnit -Name "Computers"     -Path "DC=mydomain,DC=com"
 
 -Create Security Groups w/ Powershell Script
 
-New-ADGroup -Name "IT_Admins"     -GroupScope Global -GroupCategory Security -Path "OU=IT,DC=lab,DC=local"
-New-ADGroup -Name "Finance_Users" -GroupScope Global -GroupCategory Security -Path "OU=Finance,DC=lab,DC=local"
-New-ADGroup -Name "HR_Users"      -GroupScope Global -GroupCategory Security -Path "OU=HR,DC=lab,DC=local"
-New-ADGroup -Name "Sales_Users"   -GroupScope Global -GroupCategory Security -Path "OU=Sales,DC=lab,DC=local"
+New-ADGroup -Name "IT_Admins"     -GroupScope Global -GroupCategory Security -Path "OU=IT,DC=mydomain,DC=com"
+New-ADGroup -Name "Finance_Users" -GroupScope Global -GroupCategory Security -Path "OU=Finance,DC=mydomain,DC=com"
+New-ADGroup -Name "HR_Users"      -GroupScope Global -GroupCategory Security -Path "OU=HR,DC=mydomain,DC=com"
+New-ADGroup -Name "Sales_Users"   -GroupScope Global -GroupCategory Security -Path "OU=Sales,DC=mydomain,DC=com"
 
 ## Create Multiple User Accounts
 Important: Run the entire block below at once — not line by line. The $password variable must be defined before the New-ADUser commands or PowerShell will fail.
 
-# Run this entire script together
-
+# Run this entire script together 
 $password = ConvertTo-SecureString "Welcome@2026!" -AsPlainText -Force
 
+#Creates 4 users
 New-ADUser -Name "alice.chen" -GivenName "Alice" -Surname "Chen" `
   -SamAccountName "alice.chen" -UserPrincipalName "alice.chen@mydomain.com" `
   -Path "OU=IT,DC=mydomain,DC=com" -AccountPassword $password -Enabled $true
@@ -264,6 +264,7 @@ New-ADUser -Name "david.smith" -GivenName "David" -Surname "Smith" `
   -SamAccountName "david.smith" -UserPrincipalName "david.smith@mydomain.com" `
   -Path "OU=Sales,DC=mydomain,DC=com" -AccountPassword $password -Enabled $true
 
+#Adds each user to their department
 Add-ADGroupMember -Identity "IT_Admins"     -Members "alice.chen"
 Add-ADGroupMember -Identity "Finance_Users" -Members "bob.patel"
 Add-ADGroupMember -Identity "HR_Users"      -Members "carol.jones"
@@ -359,8 +360,7 @@ Run all of these on the DC.
 
 - Audit inactive accounts
 ## $cutoff = (Get-Date).AddDays(-90)
-## Get-ADUser -Filter {LastLogonDate -lt $cutoff -and Enabled -eq $true} `
-##  -Properties LastLogonDate | Select-Object Name, LastLogonDate
+## Get-ADUser -Filter {LastLogonDate -lt $cutoff -and Enabled -eq $true}  -Properties LastLogonDate | Select-Object Name, LastLogonDate
 ## Get-ADPrincipalGroupMembership -Identity "alice.chen" | Select-Object Name
 
 ## Troubleshooting
